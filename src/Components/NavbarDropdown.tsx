@@ -9,7 +9,7 @@ const NavbarDropdown = () => {
         setToggle(!toggle)
     }
   return (
-    <div className="w-[264px] rounded-lg bg-grey-400  overflow-hidden absolute">
+    <div className="w-[264px] mt-4 rounded-lg bg-grey-400  overflow-hidden absolute">
       <p className="text-grey-700 text-xs font-bold tracking-[2.4px] px-6 py-4">
         ALL BOARDS (3)
       </p>
