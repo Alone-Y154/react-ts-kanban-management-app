@@ -1,9 +1,7 @@
-// type Props = {
-//     type: string;
-// }
 
 const Delete = () => {
-  // const type = props.type
+
+  
   return (
     <div className="w-full flex justify-center items-center h-screen bg-secondary-700 absolute bg-opacity-50">
       <div className="flex flex-col w-[343px] h-[284px] p-6 bg-grey-400 rounded-md">

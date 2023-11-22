@@ -29,9 +29,17 @@ export type Kanban = {
     board: Board[];
 }
 
+interface dialogs {
+    [key: string]: boolean;
+}
+
 export type KanbanContext = {
     kanban: Kanban;
-
+    handleDialog: (component : string) => void;
+    dialogs: dialogs;
+    // closeDialogsOnOutsideClick: (component : string) => void;
+    toggleTheme: () => void;
+    toggle: boolean;
 }
 
 export type kanbanProviderProps = {
@@ -44,18 +52,38 @@ export const kanbanContext = createContext<KanbanContext | null>(null);
 
 export const Kanbanprovider = ({children} : kanbanProviderProps) => {
 
-    const [kanban, setKanban] = useState<Kanban>({ board: [] }); 
-
+    const [kanban, setKanban] = useState<Kanban>({ board: [] });
+    const [dialogs, setDialogs] = useState<{ [key: string]: boolean }>({
+        "NavbarDropdown": false,
+        "ViewTask": false,
+        "EditandDeleteTask":false,
+        "EditTask":false,
+        "DeleteTask": false,
+        "AddNewTask": false,
+        "EditandDeleteBoard":false
+    }) 
+    const [toggle,setToggle] = useState<boolean>(false)
+    const toggleTheme = ():void => {
+        setToggle(!toggle)
+    }
     useEffect(() => {
         if (data && data.boards) {
           setKanban(data); 
         }
         console.log("data", data)
       }, []); 
-    
 
+      const handleDialog = (component: string) => {
+        setDialogs((prevDialogs) => ({
+            ...prevDialogs,
+            [component]: !prevDialogs[component], 
+          }));
+      }
+
+    
+ 
     return(
-        <kanbanContext.Provider value={{kanban}}>
+        <kanbanContext.Provider value={{kanban,dialogs,handleDialog, toggleTheme , toggle}}>
             {children}
         </kanbanContext.Provider>
     )
