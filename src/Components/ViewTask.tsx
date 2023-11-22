@@ -17,7 +17,7 @@ const ViewTask = () => {
         <img onClick={handleEditandDeleteCard} src={hamburger} alt=""/>
        </div>
        <div className="absolute ml-24 mt-14">
-       {dialogs.EditandDeleteCard && <EditandDelete />}
+       {dialogs.EditandDeleteTask && <EditandDelete />}
        </div>
        <p className="text-grey-700 text-[13px] font-medium leading-[23px] mb-6">We know what we're planning to build for version one. Now we need to finalise the first pricing model we'll use. Keep iterating the subtasks until we have a coherent proposition.</p>
        <p className="text-grey-700 text-xs font-bold mb-4">Subtasks(2 of 3)</p>
