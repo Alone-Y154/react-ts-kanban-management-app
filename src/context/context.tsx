@@ -26,7 +26,7 @@ interface Subtask {
   
 
 export type Kanban = {
-    board: Board[];
+    boards: Board[];
 }
 
 interface dialogs {
@@ -52,7 +52,7 @@ export const kanbanContext = createContext<KanbanContext | null>(null);
 
 export const Kanbanprovider = ({children} : kanbanProviderProps) => {
 
-    const [kanban, setKanban] = useState<Kanban>({ board: [] });
+    const [kanban, setKanban] = useState<Kanban>({ boards: [] });
     const [dialogs, setDialogs] = useState<{ [key: string]: boolean }>({
         "NavbarDropdown": false,
         "ViewTask": false,
@@ -62,6 +62,7 @@ export const Kanbanprovider = ({children} : kanbanProviderProps) => {
         "AddNewTask": false,
         "EditandDeleteBoard":false
     }) 
+    // const boardData = data;
     const [toggle,setToggle] = useState<boolean>(false)
     const toggleTheme = ():void => {
         setToggle(!toggle)
