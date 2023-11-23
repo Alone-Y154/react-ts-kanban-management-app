@@ -11,7 +11,7 @@ interface Board {
     tasks: Task[];
   }
   
-  interface Task {
+ export interface Task {
     title: string;
     description: string;
     status: string;
@@ -19,7 +19,7 @@ interface Board {
   }
  
 
-interface Subtask {
+export interface Subtask {
     title: string;
     isCompleted: boolean;
   }
@@ -35,11 +35,20 @@ interface dialogs {
 
 export type KanbanContext = {
     kanban: Kanban;
-    handleDialog: (component : string) => void;
+    handleDialog: (component : string, currentNav: string) => void;
     dialogs: dialogs;
     // closeDialogsOnOutsideClick: (component : string) => void;
     toggleTheme: () => void;
     toggle: boolean;
+    currentPage: string;
+    countCompletedSubtasks: (task: Task | null) => number;
+    handleViewTask: (task: Task) => void;
+    viewTaskDetails: Task | null;
+    handleViewTaskCheckbox: (selectedTask : Subtask) => void;
+    handleDeleteBoard: (board: boolean) => void;
+    deleteBoard: boolean;
+    handleNewTask : (addNewTask :boolean) => void;
+    newTask: boolean;
 }
 
 export type kanbanProviderProps = {
@@ -60,9 +69,14 @@ export const Kanbanprovider = ({children} : kanbanProviderProps) => {
         "EditTask":false,
         "DeleteTask": false,
         "AddNewTask": false,
-        "EditandDeleteBoard":false
+        "EditandDeleteBoard":false,
+        "EditBoard": false
     }) 
-    // const boardData = data;
+
+    const [currentPage, setCurrentPage] = useState<string>("");
+    const [viewTaskDetails, setViewTaskDetails] = useState<Task | null>(null);
+    const [deleteBoard, setDeleteBoard] = useState<boolean>(false);
+    const [newTask, setNewTask] = useState<boolean>(false);
     const [toggle,setToggle] = useState<boolean>(false)
     const toggleTheme = ():void => {
         setToggle(!toggle)
@@ -70,21 +84,52 @@ export const Kanbanprovider = ({children} : kanbanProviderProps) => {
     useEffect(() => {
         if (data && data.boards) {
           setKanban(data); 
+          setCurrentPage(data?.boards[0]?.name)
         }
         console.log("data", data)
       }, []); 
 
-      const handleDialog = (component: string) => {
+      const handleDialog = (component: string, currentNav : string) => {
         setDialogs((prevDialogs) => ({
             ...prevDialogs,
             [component]: !prevDialogs[component], 
           }));
+          setCurrentPage(currentNav);
       }
 
-    
+      const countCompletedSubtasks = (task: Task | null): number => {
+        if(!task) return 0
+        const completedSubtasks = task.subtasks.filter((subtask: Subtask) => subtask.isCompleted);
+        return completedSubtasks.length;
+      };
+
+      const handleViewTask = (task : Task) => {
+        setViewTaskDetails(task)
+      }
+
+      const handleViewTaskCheckbox = (selectedTask: Subtask) => {
+        // Ensure viewTaskDetails exists and has subtasks
+        if (viewTaskDetails && viewTaskDetails.subtasks) {
+          // Map through the subtasks and find the matching task to update
+          const updatedSubtasks = viewTaskDetails.subtasks.map(task =>
+            task.title === selectedTask.title ? { ...task, isCompleted: !task.isCompleted } : task
+          );
+      
+          // Update viewTaskDetails with the modified subtasks
+          setViewTaskDetails({ ...viewTaskDetails, subtasks: updatedSubtasks });
+        }
+      }
+
+      const handleDeleteBoard = (board: boolean) => {
+        setDeleteBoard(!board)
+      }
+
+      const handleNewTask = (addNewTask : boolean) => {
+        setNewTask(!addNewTask)
+      }
  
     return(
-        <kanbanContext.Provider value={{kanban,dialogs,handleDialog, toggleTheme , toggle}}>
+        <kanbanContext.Provider value={{kanban,dialogs,handleDialog, toggleTheme , toggle, currentPage, countCompletedSubtasks, handleViewTask, viewTaskDetails, handleViewTaskCheckbox, deleteBoard, handleDeleteBoard, newTask, handleNewTask}}>
             {children}
         </kanbanContext.Provider>
     )
