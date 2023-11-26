@@ -55,6 +55,7 @@ export type KanbanContext = {
   newTask: boolean;
   handleViewTaskDropdown: (dropdown: string) => void;
   updateKanban: (updatedTaskDetails : Task) => void;
+  updateKanbanState: (updatedTaskDetails: Task) => void;
 };
 
 export type kanbanProviderProps = {
@@ -131,7 +132,7 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
 
   const handleViewTaskCheckbox = (selectedTask: Subtask) => {
     // Ensure viewTaskDetails exists and has subtasks
-    // if (viewTaskDetails && viewTaskDetails.subtasks) {
+    if (viewTaskDetails && viewTaskDetails.subtasks) {
       // Map through the subtasks and find the matching task to update
       const updatedSubtasks = viewTaskDetails.subtasks.map((task) =>
         task.title === selectedTask.title
@@ -141,7 +142,27 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
 
       // Update viewTaskDetails with the modified subtasks
       setViewTaskDetails({ ...viewTaskDetails, subtasks: updatedSubtasks });
-    // }
+      updateKanbanState({...viewTaskDetails, subtasks: updatedSubtasks})
+    }
+  };
+
+  const updateKanbanState = (updatedTaskDetails: Task) => {
+    // Map through the boards in the kanban state
+    const updatedBoards = kanban.boards.map((board) => {
+      // Map through the columns in each board
+      const updatedColumns = board.columns.map((column) => {
+        // Map through the tasks in each column
+        const updatedTasks = column.tasks.map((task) =>
+          // Checking if the task title matches the updatedTaskDetails title
+          task.title === updatedTaskDetails.title ? updatedTaskDetails : task
+        );
+        return { ...column, tasks: updatedTasks };
+      });
+      return { ...board, columns: updatedColumns };
+    });
+  
+    // Update the kanban state with the modified boards
+    setKanban({ boards: updatedBoards });
   };
 
   const handleViewTaskDropdown = (dropdown: string) => {
@@ -166,11 +187,7 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
              col.tasks.splice(viewTaskIndex, 1)
             }
             if(col.name === updatedTaskDetails.status){
-              // col.tasks.map(task => {
-                // if(task.title === updatedTaskDetails.title){
                   col.tasks.push(updatedTaskDetails)
-                // }
-              // })
             }
           })
         }
@@ -207,7 +224,8 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
         newTask,
         handleNewTask,
         handleViewTaskDropdown,
-        updateKanban
+        updateKanban,
+        updateKanbanState
       }}
     >
       {children}
