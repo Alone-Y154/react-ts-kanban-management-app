@@ -23,17 +23,17 @@ const Column = () => {
                       <div className="rounded-md flex flex-col gap-5 w-[280px] bg-grey-500 min-h-[75vh]">
                        {
                         col.tasks.map((task,i) => {
-                            return(
-                        <Task key={i} task={task}/>
-                            )
+                            if(col.name === task.status){
+                                return(
+                                    <Task key={i} taskIndex = {i} task={task}/>
+                                        )
+                            }
+                           
                         })
                        }
                       </div>
                     </div>
 
-                    {/* <div className="mt-10">
-                      <NewColumn />
-                    </div> */}
                   </div>
                 );
               })}
@@ -43,16 +43,7 @@ const Column = () => {
             </div>
           );
         }
-        // else{
-        //     return ( <div className="mt-10">
-        //     <NewColumn />
-        //     dihcuygcd
-        //     </div>)
-        // }
-        // return <div className="mt-10">
-        //         <NewColumn />
-        //         kijhyg
-        //          </div>
+
       })}
     </div>
   );

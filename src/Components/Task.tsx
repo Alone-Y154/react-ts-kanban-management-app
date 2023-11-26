@@ -2,12 +2,12 @@ import { useKanban } from "../context/context"
 import { Task as TaskType } from "../context/context";
 
 
-const Task = ({ task }: { task: TaskType }) => {
+const Task = ({ task, taskIndex }: { task: TaskType, taskIndex: number }) => {
   // const task = props.task;
   const {handleDialog, currentPage, countCompletedSubtasks, handleViewTask} = useKanban();
   const handleDialogViewTask = () => {
     handleDialog('ViewTask', currentPage); // Call handleDialog to open NavbarDropdown
-    handleViewTask(task)
+    handleViewTask(task,taskIndex)
   };
 
 
