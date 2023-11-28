@@ -56,6 +56,9 @@ export type KanbanContext = {
   handleViewTaskDropdown: (dropdown: string) => void;
   updateKanban: (updatedTaskDetails : Task) => void;
   updateKanbanState: (updatedTaskDetails: Task) => void;
+  viewTaskIndex: number;
+  handleSubtaskRemove: (index: number)=> void;
+  handleAddSubtask: () => void;
 };
 
 export type kanbanProviderProps = {
@@ -69,7 +72,7 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
   const [dialogs, setDialogs] = useState<{ [key: string]: boolean }>({
     NavbarDropdown: false,
     ViewTask: false,
-    EditandDeleteTask: false,
+    EditandDeleteTask: false, //need to verify all the boolean values and remove unnecessary ones
     EditTask: false,
     DeleteTask: false,
     AddNewTask: false,
@@ -91,10 +94,12 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
 
   const [currentPage, setCurrentPage] = useState<string>("");
   const [viewTaskDetails, setViewTaskDetails] = useState<Task>(sampleTask);
-  const [deleteBoard, setDeleteBoard] = useState<boolean>(false); // to handle same component for differnent component edit and create board
-  const [newTask, setNewTask] = useState<boolean>(false); // to handle same component for differnent component edit and create Task
+  const [deleteBoard, setDeleteBoard] = useState<boolean>(false); // to handle same component for differnent data the components are edit and create board
+  const [newTask, setNewTask] = useState<boolean>(false); // to handle same component for differnent data the components are edit and create Task
   const [toggle, setToggle] = useState<boolean>(false); // theme
   const [viewTaskIndex, setViewTaskIndex] = useState<number>(0);
+  // const [dropdown, setDropdown] = useState<string>(viewTaskDetails?.status);
+
 
   const toggleTheme = (): void => {
     setToggle(!toggle);
@@ -103,12 +108,13 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
   useEffect(() => {
     if (data && data.boards) {
       setKanban(data);
-      setCurrentPage(data?.boards[0]?.name);
+      setCurrentPage(data?.boards[2]?.name);
     }
     console.log("data", data);
   }, []);
 
   const handleDialog = (component: string, currentNav: string) => {
+    // if(component === "")
     setDialogs((prevDialogs) => ({
       ...prevDialogs,
       [component]: !prevDialogs[component],
@@ -126,9 +132,15 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
 
   const handleViewTask = (task: Task, taskIndex: number) => {
     setViewTaskDetails(task);
-    setViewTaskIndex(taskIndex)
-
+    setViewTaskIndex(taskIndex);
+    updateKanbanState(task)
   };
+
+
+useEffect(()=> {
+  // updateKanban(viewTaskDetails)
+  console.log("hello")
+},[viewTaskDetails])
 
   const handleViewTaskCheckbox = (selectedTask: Subtask) => {
     // Ensure viewTaskDetails exists and has subtasks
@@ -168,11 +180,7 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
   const handleViewTaskDropdown = (dropdown: string) => {
 
     const updatedTaskDetails = { ...viewTaskDetails, status: dropdown };
-
     setViewTaskDetails(updatedTaskDetails);
-
-    // console.log("drop", dropdown)
-    // console.log("task",updatedTaskDetails)
     updateKanban(updatedTaskDetails);
   };
 
@@ -206,6 +214,26 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
     setNewTask(!addNewTask);
   };
 
+  // const handleTaskTitleChange = () => {
+
+  // }
+  const handleSubtaskRemove = (index: number): void => {
+    const updateSubtask = viewTaskDetails.subtasks.filter((_task,i)=> i !== index)
+    setViewTaskDetails({...viewTaskDetails,subtasks: updateSubtask})
+    updateKanbanState({...viewTaskDetails,subtasks: updateSubtask});
+
+  }
+
+  const handleAddSubtask = () => {
+    const tempSubtask: Subtask = {
+      "title": "",
+      "isCompleted" :false
+    }
+    const updateSubtask:Task = {...viewTaskDetails, subtasks: [...viewTaskDetails.subtasks,tempSubtask]}
+    setViewTaskDetails(updateSubtask);
+    updateKanbanState(updateSubtask)
+  }
+
   return (
     <kanbanContext.Provider
       value={{
@@ -225,7 +253,10 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
         handleNewTask,
         handleViewTaskDropdown,
         updateKanban,
-        updateKanbanState
+        updateKanbanState,
+        viewTaskIndex,
+        handleSubtaskRemove,
+        handleAddSubtask,
       }}
     >
       {children}
