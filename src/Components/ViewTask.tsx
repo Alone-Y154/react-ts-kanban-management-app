@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import hamburger from "../assets/icon-vertical-ellipsis.svg";
 import { useKanban } from "../context/context";
 import EditandDelete from "./EditandDeleteCard";
+import { useClickOutside } from "../context/context";
 
 const ViewTask = () => {
   const {
@@ -17,8 +18,7 @@ const ViewTask = () => {
     handleViewTaskDropdown
   } = useKanban();
 
-  const [dropdown, setDropdown] = useState(viewTaskDetails?.status);
-
+  const [dropdown, setDropdown] = useState<string>(viewTaskDetails?.status);
   const handleEditandDeleteCard = (component: string) => {
     handleDialog(component, currentPage); // Call handleDialog to open NavbarDropdown
     handleDeleteBoard(true);
@@ -26,9 +26,17 @@ const ViewTask = () => {
     handleViewTaskDropdown(dropdown)
   };
 
+  const ref = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = () => {
+    handleEditandDeleteCard('ViewTask');
+  };
+
+  useClickOutside(ref, handleClickOutside);
+  
   return (
     <div className="w-full flex justify-center items-center h-screen bg-secondary-700 absolute bg-opacity-50">
-      <div className="flex flex-col w-[343px] p-6 bg-grey-400 rounded-md">
+      <div ref={ref} className="flex flex-col w-[343px] p-6 bg-grey-400 rounded-md">
         <div className="flex gap-4 justify-between items-center mb-6">
           <p className="text-secondary-700 text-lg font-bold">
             {viewTaskDetails?.title}

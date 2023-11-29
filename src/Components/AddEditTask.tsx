@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import cross from "../assets/icon-cross.svg";
-import { useKanban } from "../context/context";
+import { useClickOutside, useKanban } from "../context/context";
 
 const AddEditTask = () => {
   const {
@@ -21,12 +21,21 @@ const AddEditTask = () => {
   // const [subtaskchange, setSubtaskChange] = useState<Subtask[]>(viewTaskDetails?.subtasks)
   const [dropdown, setDropdown] = useState<string>(viewTaskDetails?.status);
 
-  const handleSaveChanges = () => {
-    handleDialog("EditTask", currentPage);
+  const handleSaveChanges = (component: string) => {
+    handleDialog(component, currentPage);
   };
+
+  
+  const ref = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = () => {
+    handleSaveChanges(newTask ? 'EditTask': "AddNewTask");
+  };
+
+  useClickOutside(ref, handleClickOutside);
   return (
     <div className="w-full flex justify-center items-center h-screen bg-secondary-700 absolute bg-opacity-50">
-      <div className="flex flex-col w-[343px] p-6 bg-grey-400 rounded-md">
+      <div ref={ref} className="flex flex-col w-[343px] p-6 bg-grey-400 rounded-md">
         <p className="text-secondary-700 text-lg font-bold mb-6">
           {newTask ? "Edit Task" : "Add New Task"}
         </p>
@@ -109,7 +118,7 @@ const AddEditTask = () => {
           })}
 
         <div
-          onClick={handleSaveChanges}
+          onClick={()=>handleSaveChanges(newTask ? 'EditTask': "AddNewTask")}
           className="w-[295px] mt-2 mb-2 h-10 rounded-[20px] bg-primary-700  text-grey-400 flex items-center justify-center text-[13px] font-bold"
         >
           {newTask ? "Save Changes" : "Create Task"}

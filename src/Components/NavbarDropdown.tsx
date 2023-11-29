@@ -15,6 +15,14 @@ const NavbarDropdown = () => {
       handleDialog('EditBoard', currentPage)
     }
 
+    // const ref = useRef<HTMLDivElement>(null);
+
+    // const handleClickOutside = () => {
+    //   handleNavbarDropdown("NavbarDropdown")
+    // };
+    
+    // useClickOutside(ref, handleClickOutside);
+
   return (
     <div className="w-[264px] mt-4 rounded-lg bg-grey-400  overflow-hidden absolute">
       <p className="text-grey-700 text-xs font-bold tracking-[2.4px] px-6 py-4">

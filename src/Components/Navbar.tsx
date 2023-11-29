@@ -3,8 +3,9 @@ import downArrow from "../assets/icon-chevron-down.svg";
 import addTask from "../assets/icon-add-task-mobile.svg";
 import hamburger from "../assets/icon-vertical-ellipsis.svg";
 import NavbarDropdown from "./NavbarDropdown";
-import { useKanban } from "../context/context";
+import { useClickOutside, useKanban } from "../context/context";
 import EditandDelete from "./EditandDeleteCard";
+import { useRef } from "react";
 
 function Navbar() {
 
@@ -24,6 +25,14 @@ const handleBoard = () => {
   handleDeleteBoard(false);
   // handleEditBoard(false);
 }
+
+const ref = useRef<HTMLDivElement>(null);
+
+const handleClickOutside = () => {
+  handleNavbarDropdown("NavbarDropdown")
+};
+
+useClickOutside(ref, handleClickOutside);
   return (
     <div className="flex flex-col">
       <div className="flex h-16 items-center px-4 justify-between bg-grey-400">
@@ -44,7 +53,7 @@ const handleBoard = () => {
        {dialogs.EditandDeleteBoard && <EditandDelete />}
        </div>
       </div>
-      <div className="flex justify-center">
+      <div className="flex test justify-center">
         {dialogs.NavbarDropdown && <NavbarDropdown />}
       
       </div>

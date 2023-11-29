@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import {
   ReactNode,
   createContext,
@@ -114,14 +115,68 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
   }, []);
 
   const handleDialog = (component: string, currentNav: string) => {
-    // if(component === "")
     setDialogs((prevDialogs) => ({
       ...prevDialogs,
       [component]: !prevDialogs[component],
     }));
+
     setCurrentPage(currentNav);
+    handleToggle(component)
   };
 
+  console.log("out", dialogs)
+
+  const handleToggle = (component: string)=> {
+    console.log("cc", dialogs[component], component)
+    if(component === "ViewTask"){
+      if(dialogs[component]){
+        setDialogs((prevDialogs) => ({
+          ...prevDialogs,
+          EditandDeleteTask: false,
+        }));
+      }
+    }
+
+    if(component === "EditTask"){
+      if(!dialogs[component]){
+        setDialogs((prevDialogs) => ({
+          ...prevDialogs,
+          ViewTask: false,
+          EditandDeleteTask: false,
+        }));
+      }
+    }
+
+    if(component === "EditBoard"){
+      if(!dialogs[component]){
+        setDialogs((prevDialogs) => ({
+          ...prevDialogs,
+          EditandDeleteBoard: false,
+          NavbarDropdown: false
+        }));
+      }
+    }
+
+    if(component === "DeleteTask"){
+      if(!dialogs[component]){
+        setDialogs((prevDialogs) => ({
+          ...prevDialogs,
+          EditandDeleteBoard: false,
+          ViewTask: false,
+          EditandDeleteTask: false
+        }));
+      }
+    }
+
+    // if(component === "NavbarDropdown"){
+    //   if(dialogs[component]){
+    //     setDialogs((prevDialogs) => ({
+    //       ...prevDialogs,
+    //       NavbarDropdown: false
+    //     }));
+    //   }
+    // }
+  }
   const countCompletedSubtasks = (task: Task | null): number => {
     if (!task) return 0;
     const completedSubtasks = task.subtasks.filter(
@@ -137,10 +192,10 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
   };
 
 
-useEffect(()=> {
-  // updateKanban(viewTaskDetails)
-  console.log("hello")
-},[viewTaskDetails])
+// useEffect(()=> {
+//   // updateKanban(viewTaskDetails)
+//   console.log("hello")
+// },[viewTaskDetails])
 
   const handleViewTaskCheckbox = (selectedTask: Subtask) => {
     // Ensure viewTaskDetails exists and has subtasks
@@ -271,3 +326,48 @@ export const useKanban = () => {
   }
   return kanbanConsumer;
 };
+
+
+
+type ClickOutsideCallback = (event: MouseEvent) => void;
+
+export const useClickOutside = (
+  ref: React.RefObject<HTMLElement>,
+  handleClickOutside: ClickOutsideCallback
+) => {
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        handleClickOutside(event);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClick);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+    };
+  }, [ref, handleClickOutside]);
+};
+
+
+
+// useClick outside without context
+// const ref = useRef<HTMLDivElement>(null);
+
+// useEffect(() => {
+//   const handleClickOutside = (event: MouseEvent) => {
+//     if (ref.current && !ref.current.contains(event.target as Node)) {
+//       // Handle logic when clicked outside the element
+//       handleEditandDeleteCard("ViewTask");
+//     }
+//   };
+
+//   document.addEventListener('click', handleClickOutside, true);
+
+//   return () => {
+//     document.removeEventListener('click', handleClickOutside, true);
+//   };
+// }, [handleEditandDeleteCard]);
+
+
+// give ref = {ref} to which component outside you want to click
