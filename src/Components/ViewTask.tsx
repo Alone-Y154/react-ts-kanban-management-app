@@ -11,6 +11,7 @@ const ViewTask = () => {
     dialogs,
     currentPage,
     viewTaskDetails,
+    viewTaskIndex,
     countCompletedSubtasks,
     handleViewTaskCheckbox,
     handleDeleteBoard,
@@ -62,7 +63,7 @@ const ViewTask = () => {
               <input
                 type="checkbox"
                 checked={subtask.isCompleted}
-                onChange={() => handleViewTaskCheckbox(subtask)}
+                onChange={() => handleViewTaskCheckbox(subtask,viewTaskIndex)}
                 id={subtask.title}
               />
               <label
