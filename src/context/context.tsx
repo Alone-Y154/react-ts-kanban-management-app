@@ -61,6 +61,12 @@ export type KanbanContext = {
   handleSubtaskRemove: (index: number)=> void;
   handleAddSubtask: () => void;
   handleDeleteViewTask: (deleteTaskDetails: Task,deleteTaskIndex: number) => void;
+  addNewTaskDetails: (addNewTaskDetails: Task) => void;
+  addTaskDetails: Task;
+  handleNewSubtaskRemove: (index:number)=> void;
+  handleAddNewSubTask: () => void;
+  setAddTaskDetails: (task: Task) => void
+  setViewTaskDetails: (task: Task) => void
 };
 
 export type kanbanProviderProps = {
@@ -83,12 +89,12 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
   });
 
   const sampleTask: Task = {
-    title: "Build UI for search",
+    title: "",
     description: "",
-    status: "Todo",
+    status: "",
     subtasks: [
       {
-        title: "Search page",
+        title: "",
         isCompleted: false,
       },
     ],
@@ -102,6 +108,7 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
   const [viewTaskIndex, setViewTaskIndex] = useState<number>(0);
   // const [dropdown, setDropdown] = useState<string>(viewTaskDetails?.status);
 
+  const [addTaskDetails, setAddTaskDetails] = useState<Task>(sampleTask);
 
   const toggleTheme = (): void => {
     setToggle(!toggle);
@@ -180,51 +187,79 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
   }
 
 
- 
 
-  const handleDeleteViewTask = () => {
-    // let updatedKanban = { ...kanban };
-  
-    // if (deleteTaskDetails === viewTaskDetails) {
-    //   updatedKanban = {
-    //     ...updatedKanban,
-    //     boards: updatedKanban.boards.map(board => {
-    //       if (board.name === currentPage) {
-    //         return {
-    //           ...board,
-    //           columns: board.columns.map(column => {
-    //             if (column.name === deleteTaskDetails.status) {
-    //               const updatedTasks = column.tasks.filter((_task, index) => index !== deleteTaskIndex);
-    //               return {
-    //                 ...column,
-    //                 tasks: updatedTasks,
-    //               };
-    //             }
-    //             return column;
-    //           }),
-    //         };
-    //       }
-    //       return board;
-    //     }),
-    //   };
-    // }
-  
-    // setKanban(updatedKanban);
 
-    const updateKanban = {...kanban}
-    // if(deleteTaskDetails === viewTaskDetails) {
-      updateKanban.boards.map(board => {
-        if(board.name === currentPage) {
-          board.columns.map(col=> {
-            if(col.name === viewTaskDetails.status){
-              col.tasks.splice(viewTaskIndex,1)
-            }
-          })
+  const addNewTaskDetails = (addNewTaskDetails: Task) => {
+
+    const updatedKanban = { ...kanban };
+
+    updatedKanban.boards.map((board,boardIndex) => {
+     if(board.name === currentPage){
+      updatedKanban.boards[boardIndex].columns.map((col,colIndex) => {
+        if(col.name === addNewTaskDetails.status){
+          updatedKanban.boards[boardIndex].columns[colIndex].tasks.push(addNewTaskDetails)
+          // updateKanbanState(addNewTaskDetails,  updatedKanban.boards[boardIndex].columns[colIndex].tasks.length)
         }
       })
+     }
+    })
+
+    console.log("tetstst", updatedKanban);
+    // handleAddTaskDropdown(addNewTaskDetails, addNewTaskDetails.status)
+    UpdateBoard(updatedKanban)
+    // updateKanban(addNewTaskDetails)
+    // updateKanbanState(addNewTaskDetails)
+    setAddTaskDetails(sampleTask)
+  }
+ 
+  const UpdateBoard = (board: Kanban) => { 
+    setKanban(board)
+  }
+
+  const handleDeleteViewTask = (deleteTaskDetails:Task, deleteTaskIndex: number) => {
+    let updatedKanban = { ...kanban };
+  
+    if (deleteTaskDetails === viewTaskDetails) {
+      updatedKanban = {
+        ...updatedKanban,
+        boards: updatedKanban.boards.map(board => {
+
+          if (board.name === currentPage) {
+            return {
+              ...board,
+              columns: board.columns.map(column => {
+                if (column.name === deleteTaskDetails.status && deleteTaskIndex === viewTaskIndex) {
+                  const updatedTasks = column.tasks.filter((_task, index) => index !== deleteTaskIndex);
+                  return {
+                    ...column,
+                    tasks: updatedTasks,
+                  };
+                }
+                return column;
+              }),
+            };
+          }
+          return board;
+        }),
+      };
+    }
+  
+    UpdateBoard(updatedKanban)
+
+    // const updateKanban = {...kanban}
+    // // if(deleteTaskDetails === viewTaskDetails) {
+    //   updateKanban.boards.map(board => {
+    //     if(board.name === currentPage) {
+    //       board.columns.map(col=> {
+    //         if(col.name === viewTaskDetails.status){
+    //           col.tasks.splice(viewTaskIndex,1)
+    //         }
+    //       })
+    //     }
+    //   })
     // }
 
-    setKanban(updateKanban)
+    // setKanban(updateKanban)
   };
   
   
@@ -241,14 +276,14 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
   const handleViewTask = (task: Task, taskIndex: number) => {
     setViewTaskDetails(task);
     setViewTaskIndex(taskIndex);
-    // updateKanbanState(task, taskIndex)
+    updateKanbanState(task, taskIndex)
   };
 
 
 // useEffect(()=> {
-//   // updateKanban(viewTaskDetails)
+//   setKanban(kanban)
 //   console.log("hello")
-// },[viewTaskDetails])
+// },[kanban])
 
   const handleViewTaskCheckbox = (selectedTask: Subtask, taskIndex: number) => {
     // Ensure viewTaskDetails exists and has subtasks
@@ -267,7 +302,7 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
   };
 
   // to edit the kanban task and reflect the changes 
-  const updateKanbanState = (updatedTaskDetails: Task , updatedTaskIndex: number) => {
+  const updateKanbanState = (updatedTaskDetails: Task , updatedTaskIndex?: number) => {
     // Map through the boards in the kanban state
     const updatedBoards = kanban.boards.map((board) => {
       if(board.name === currentPage){
@@ -288,7 +323,7 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
     });
   
     // Update the kanban state with the modified boards
-    setKanban({ boards: updatedBoards });
+    UpdateBoard({ boards: updatedBoards });
   };
 
   const handleViewTaskDropdown = (dropdown: string) => {
@@ -297,6 +332,14 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
     setViewTaskDetails(updatedTaskDetails);
     updateKanban(updatedTaskDetails);
   };
+
+  // const handleAddTaskDropdown = (addTask: Task, dropdown: string) => {
+
+  //   const updatedTaskDetails = { ...addTask, status: dropdown };
+  //   setAddTaskDetails(updatedTaskDetails);
+  //   updateKanban(updatedTaskDetails);
+  //   setAddTaskDetails(sampleTask)
+  // };
 
   const updateKanban = (updatedTaskDetails : Task) => {
     const updateKanban= {...kanban}
@@ -316,8 +359,8 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
       })
     }
 
-
-    setKanban(updateKanban)
+    UpdateBoard(updateKanban)
+    // setKanban(updateKanban)
   }
 
   const handleDeleteBoard = (board: boolean) => {
@@ -335,7 +378,11 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
     const updateSubtask = viewTaskDetails.subtasks.filter((_task,i)=> i !== index)
     setViewTaskDetails({...viewTaskDetails,subtasks: updateSubtask})
     updateKanbanState({...viewTaskDetails,subtasks: updateSubtask}, viewTaskIndex);
+  }
 
+  const handleNewSubtaskRemove = (index:number): void => {
+    const updateSubtask = addTaskDetails.subtasks.filter((_task,i)=> i !== index);
+      setAddTaskDetails({...addTaskDetails,subtasks:updateSubtask})
   }
 
   const handleAddSubtask = () => {
@@ -346,6 +393,15 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
     const updatetask:Task = {...viewTaskDetails, subtasks: [...viewTaskDetails.subtasks,tempSubtask]}
     setViewTaskDetails(updatetask);
     updateKanbanState(updatetask , viewTaskIndex)
+  }
+
+  const handleAddNewSubTask = () => {
+    const tempSubtask: Subtask = {
+      "title": "",
+      "isCompleted" :false
+    }
+    const updatetask:Task = {...addTaskDetails, subtasks: [...addTaskDetails.subtasks,tempSubtask]}
+    setAddTaskDetails(updatetask)
   }
 
   return (
@@ -371,7 +427,13 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
         viewTaskIndex,
         handleSubtaskRemove,
         handleAddSubtask,
-        handleDeleteViewTask
+        handleDeleteViewTask,
+        addNewTaskDetails,
+        addTaskDetails,
+        handleNewSubtaskRemove,
+        handleAddNewSubTask,
+        setAddTaskDetails,
+        setViewTaskDetails
       }}
     >
       {children}

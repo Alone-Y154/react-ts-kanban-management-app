@@ -37,7 +37,7 @@ const Column = () => {
                   </div>
                 );
               })}
-                 <div className="mt-10">
+                 <div className="mt-10" >
                       <NewColumn />
                     </div>
             </div>

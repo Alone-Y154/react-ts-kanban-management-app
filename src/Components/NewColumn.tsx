@@ -1,6 +1,15 @@
+import { useKanban } from "../context/context";
+
 const NewColumn = () => {
+
+  const {currentPage, handleDialog, handleDeleteBoard } = useKanban();
+
+  const handleBoard = () => {
+    handleDeleteBoard(false);
+    handleDialog("EditBoard", currentPage)
+  }
   return (
-      <div className="text-grey-700 cursor-pointer rounded-md text-lg font-bold flex justify-center w-[280px] bg-grey-600 h-[75vh] items-center ">
+      <div onClick={handleBoard} className="text-grey-700 cursor-pointer rounded-md text-lg font-bold flex justify-center w-[280px] bg-grey-600 h-[75vh] items-center ">
         + New Column
       </div>
   );

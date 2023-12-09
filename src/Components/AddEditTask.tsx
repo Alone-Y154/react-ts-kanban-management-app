@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import cross from "../assets/icon-cross.svg";
 import { useClickOutside, useKanban } from "../context/context";
 
@@ -14,16 +14,29 @@ const AddEditTask = () => {
     // handleViewTaskDropdown,
     handleSubtaskRemove,
     handleAddSubtask,
+    addNewTaskDetails,
+    addTaskDetails,
+    handleNewSubtaskRemove,
+    handleAddNewSubTask,
+    setAddTaskDetails,
+    setViewTaskDetails,
+    
   } = useKanban();
 
   // const [titleChange, setTitleChange] = useState<string>(viewTaskDetails?.title)
   // const [descriptionChange, setDescriptionChange] = useState<string>(viewTaskDetails?.description)
   // const [subtaskchange, setSubtaskChange] = useState<Subtask[]>(viewTaskDetails?.subtasks)
-  const [dropdown, setDropdown] = useState<string>(viewTaskDetails?.status);
+  // const [dropdown, setDropdown] = useState<string>(viewTaskDetails?.status);
 
   const handleSaveChanges = (component: string) => {
     handleDialog(component, currentPage);
   };
+
+  const handleSave = () => {
+    addNewTaskDetails(addTaskDetails)
+    handleViewTask(viewTaskDetails,viewTaskIndex)
+    handleSaveChanges(newTask ? 'EditTask': "AddNewTask");
+  }
 
   
   const ref = useRef<HTMLDivElement>(null);
@@ -41,7 +54,9 @@ const AddEditTask = () => {
         </p>
         <p className="text-grey-700 text-xs font-bold mb-2">Tittle</p>
         <input
-          value={newTask ? viewTaskDetails?.title : ""} onChange={(e)=>handleViewTask({...viewTaskDetails, title: e.target.value},viewTaskIndex)}
+          value={newTask ? viewTaskDetails?.title : addTaskDetails?.title} onChange={(e)=>{
+            newTask ?  setViewTaskDetails({...viewTaskDetails, title: e.target.value}) : setAddTaskDetails({...addTaskDetails, title: e.target.value})
+          }}
           placeholder="e.g. Web Design"
           className="mb-6 placeholder:opacity-25 placeholder:text-secondary-700 w-[295px] h-10 rounded border text-secondary-700 text-[13px] font-medium leading-[23px] border-solid border-grey-700 outline-none px-4 py-2 border-opacity-25"
           type="text"
@@ -49,7 +64,9 @@ const AddEditTask = () => {
         />
         <p className="text-grey-700 text-xs font-bold mb-2">Description</p>
         <textarea
-          value={newTask ? viewTaskDetails?.description : ""} onChange={(e)=>handleViewTask({...viewTaskDetails, description: e.target.value},viewTaskIndex)}
+          value={newTask ? viewTaskDetails?.description : addTaskDetails?.description} onChange={(e)=>{
+            newTask ? setViewTaskDetails({...viewTaskDetails, description: e.target.value}) : setAddTaskDetails({...addTaskDetails, description: e.target.value})
+            }}
           placeholder="e.g. It’s always good to take a break. This 
           15 minute break will  recharge the batteries 
           a little."
@@ -58,13 +75,23 @@ const AddEditTask = () => {
         <p className="text-grey-700 text-xs font-bold mb-2">Subtasks</p>
 
         {!newTask && (
-          <div className="flex mb-3 w-[295px] gap-4 items-center ">
-            <input
-              className="w-[264px] h-10 rounded border border-solid border-grey-700 outline-none bg-grey-400 border-opacity-25 placeholder:opacity-25 placeholder:text-secondary-700 text-secondary-700 text-[13px] font-medium leading-[23px] px-4 py-2"
-              type="text"
-            />
-            <img src={cross} alt="" />
-          </div>
+          addTaskDetails.subtasks.map((subtask,index) => {
+            return(
+              <div className="flex mb-3 w-[295px] gap-4 items-center ">
+              <input
+                value={subtask.title} onChange={(e) => {
+                  const updatedSubtasks = [...addTaskDetails.subtasks];
+                    updatedSubtasks[index].title = e.target.value;
+                    setAddTaskDetails({...addTaskDetails, subtasks: updatedSubtasks})
+                }}
+                className="w-[264px] h-10 rounded border border-solid border-grey-700 outline-none bg-grey-400 border-opacity-25 placeholder:opacity-25 placeholder:text-secondary-700 text-secondary-700 text-[13px] font-medium leading-[23px] px-4 py-2"
+                type="text"
+              />
+              <img  className="cursor-pointer" onClick={() => handleNewSubtaskRemove(index)} src={cross} alt="" />
+            </div>
+            )
+          })
+        
         )}
 
         {newTask &&
@@ -76,7 +103,7 @@ const AddEditTask = () => {
                   value={_subTask.title} onChange={(e)=>{
                     const updatedSubtasks = [...viewTaskDetails.subtasks];
                     updatedSubtasks[index].title = e.target.value;
-                    handleViewTask({...viewTaskDetails, subtasks: updatedSubtasks},viewTaskIndex)}}
+                    setViewTaskDetails({...viewTaskDetails, subtasks: updatedSubtasks})}}
                   className="w-[264px] h-10 rounded border border-solid border-grey-700 outline-none bg-grey-400 border-opacity-25 placeholder:opacity-25 placeholder:text-secondary-700 text-secondary-700 text-[13px] font-medium leading-[23px] px-4 py-2"
                   type="text"
                 />
@@ -91,22 +118,22 @@ const AddEditTask = () => {
           })}
 
         <button
-          onClick={handleAddSubtask}
+          onClick={newTask ? handleAddSubtask: handleAddNewSubTask }
           className="w-[295px] mb-6 h-10 rounded-[20px] bg-primary-700 bg-opacity-10 text-primary-700 flex items-center justify-center text-[13px] font-bold"
         >
           +Add New Subtask
         </button>
 
         {!newTask && (
-          <p className="text-grey-700 text-xs font-bold mb-2">Status</p>
+          <p className="text-grey-700 text-xs font-bold mb-2">Status <span className="text-[8px] text-danger-700 float-right ">Please change the status to see the task</span></p>
         )}
         {!newTask &&
           kanban.boards.map((board, index) => {
             if (board.name === currentPage) {
               return (
                 <select
-                  value={dropdown}
-                  onChange={(e) => setDropdown(e.target.value)}
+                  value={addTaskDetails?.status}
+                  onChange={(e) => setAddTaskDetails({...addTaskDetails, status: e.target.value})}
                   className="mb-2 w-[295px] h-10 rounded border border-solid outline-none px-4 py-2 text-[13px] font-medium leading-[23px] text-secondary-700 border-grey-700 border-opacity-25"
                 >
                   {kanban.boards[index].columns.map((col) => {
@@ -118,7 +145,7 @@ const AddEditTask = () => {
           })}
 
         <div
-          onClick={()=>handleSaveChanges(newTask ? 'EditTask': "AddNewTask")}
+          onClick={handleSave}
           className="w-[295px] mt-2 mb-2 h-10 rounded-[20px] bg-primary-700  text-grey-400 flex items-center justify-center text-[13px] font-bold"
         >
           {newTask ? "Save Changes" : "Create Task"}
