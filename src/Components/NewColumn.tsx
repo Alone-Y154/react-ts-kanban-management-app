@@ -2,10 +2,10 @@ import { useKanban } from "../context/context";
 
 const NewColumn = () => {
 
-  const {currentPage, handleDialog, handleDeleteBoard } = useKanban();
+  const {currentPage, handleDialog, handleCreateBoard } = useKanban();
 
   const handleBoard = () => {
-    handleDeleteBoard(false);
+    handleCreateBoard(true);
     handleDialog("EditBoard", currentPage)
   }
   return (

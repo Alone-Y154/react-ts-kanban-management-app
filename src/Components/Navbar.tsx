@@ -3,13 +3,13 @@ import downArrow from "../assets/icon-chevron-down.svg";
 import addTask from "../assets/icon-add-task-mobile.svg";
 import hamburger from "../assets/icon-vertical-ellipsis.svg";
 import NavbarDropdown from "./NavbarDropdown";
-import { useClickOutside, useKanban } from "../context/context";
+import { useKanban } from "../context/context";
 import EditandDelete from "./EditandDeleteCard";
-import { useRef } from "react";
+import { useEffect } from "react";
 
 function Navbar() {
 
-  const {dialogs, handleDialog, currentPage, handleDeleteBoard, handleNewTask} = useKanban(); // Accessing handleDialog function from context
+  const {dialogs, handleDialog,kanban, currentPage , handleCreateBoard, handleNewTask, handleDeleteBoard} = useKanban(); // Accessing handleDialog function from context
 
   const handleNavbarDropdown = (component : string) => {
     handleDialog(component, currentPage); // Call handleDialog to open NavbarDropdown
@@ -21,25 +21,39 @@ const handleTask = () => {
 }
 
 const handleBoard = () => {
-  handleNavbarDropdown("EditandDeleteBoard")
+  handleCreateBoard(true);
   handleDeleteBoard(false);
-  // handleEditBoard(false);
+  handleNavbarDropdown("EditandDeleteBoard")
 }
 
-const ref = useRef<HTMLDivElement>(null);
+useEffect(()=>{
+  console.log("cnhc", currentPage)
+},[currentPage])
 
-const handleClickOutside = () => {
-  handleNavbarDropdown("NavbarDropdown")
-};
+// const ref = useRef<HTMLDivElement>(null);
 
-useClickOutside(ref, handleClickOutside);
+// const handleClickOutside = () => {
+//   handleNavbarDropdown("NavbarDropdown")
+// };
+
+// useClickOutside(ref, handleClickOutside);
   return (
     <div className="flex flex-col">
       <div className="flex h-16 items-center px-4 justify-between bg-grey-400">
         <div onClick={()=>handleNavbarDropdown("NavbarDropdown")}  className="flex cursor-pointer items-center">
           <img className="mr-4" src={Logo} alt="" />
           <p className="mx-2 text-secondary-700 text-lg font-bold">
-            {currentPage}
+            {currentPage &&
+              
+              kanban.boards.map(board => {
+              if(board.name === currentPage){
+                return (
+                  board.name
+                )
+              }
+            })}
+
+            {/* {currentPage} */}
           </p>
           <img src={downArrow} className={`${dialogs.NavbarDropdown ? "rotate-180" : ""}`} alt="" />
         </div>

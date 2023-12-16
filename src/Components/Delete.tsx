@@ -3,7 +3,7 @@ import { useClickOutside, useKanban } from "../context/context";
 
 const Delete = () => {
 
-  const {viewTaskDetails, deleteBoard, currentPage, handleDialog, handleDeleteViewTask, viewTaskIndex} =useKanban();
+  const {viewTaskDetails, deleteBoard, handleDeleteCurrentBoard,  currentPage, handleDialog, handleDeleteViewTask, viewTaskIndex} =useKanban();
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -17,8 +17,12 @@ const Delete = () => {
   
   const handleDeleteTask = () => {
     handleDeleteViewTask(viewTaskDetails, viewTaskIndex)
-    handleDelete("DeleteTask")
+    handleClickOutside();
+  }
 
+  const handleDeleteBoard = () => {
+    handleDeleteCurrentBoard();
+    handleClickOutside()
   }
   useClickOutside(ref, handleClickOutside);
   return (
@@ -30,7 +34,7 @@ const Delete = () => {
           subtasks? This action cannot be reversed.`}
          
         </p>
-        <button onClick={handleDeleteTask} className="rounded-[20px] bg-danger-700 text-grey-400 w-[295px] h-10 flex justify-center items-center text-[13px] font-bold leading-[23px] mb-4">Delete</button>
+        <button onClick={deleteBoard ? handleDeleteBoard :handleDeleteTask } className="rounded-[20px] bg-danger-700 text-grey-400 w-[295px] h-10 flex justify-center items-center text-[13px] font-bold leading-[23px] mb-4">Delete</button>
         <button onClick={handleClickOutside} className="rounded-[20px] bg-primary-700 bg-opacity-10 text-primary-700 w-[295px] h-10 flex justify-center items-center text-[13px] font-bold leading-[23px] ">cancel</button>
       </div>
     </div>

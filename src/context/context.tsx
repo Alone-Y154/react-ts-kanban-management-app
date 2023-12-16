@@ -13,7 +13,7 @@ interface Board {
   columns: Column[];
 }
 
-interface Column {
+export interface Column {
   name: string;
   tasks: Task[];
 }
@@ -65,8 +65,24 @@ export type KanbanContext = {
   addTaskDetails: Task;
   handleNewSubtaskRemove: (index:number)=> void;
   handleAddNewSubTask: () => void;
-  setAddTaskDetails: (task: Task) => void
-  setViewTaskDetails: (task: Task) => void
+  setAddTaskDetails: (task: Task) => void;
+  setViewTaskDetails: (task: Task) => void;
+  handleCreateBoard: (newBoard: boolean) => void;
+  newBoard: boolean;
+  setAddBoard: (board: Board) => void;
+  addBoard : Board;
+  handleNewColumn: () => void;
+  handleRemoveNewColumn: (colIndex: number) => void;
+  handleAddNewBoard: (board: Board) => void;
+  setEditBoard: (board: Kanban) => void;
+  setCurrentPageIndex: (boardIndex : number) => void;
+  currentPageIndex: number;
+  editBoard: Kanban;
+  handleRemoveColumn: (colIndex: number) => void;
+  handleAddNewColumn: () => void;
+  handleBoardNameChange: (e:React.ChangeEvent<HTMLInputElement>) => void
+  handleBoardColumnNameChange: (e:React.ChangeEvent<HTMLInputElement>, colIndex: number) => void;
+  handleDeleteCurrentBoard: () => void;
 };
 
 export type kanbanProviderProps = {
@@ -86,6 +102,7 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
     AddNewTask: false,
     EditandDeleteBoard: false,
     EditBoard: false,
+    // AddNewBoard: false,
   });
 
   const sampleTask: Task = {
@@ -100,6 +117,17 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
     ],
   };
 
+  const sampleBoard: Board =     {
+    "name": "",
+    "columns": [
+      {
+        "name": "",
+        "tasks": []
+      }
+    ]
+  }
+
+  const [currentPageIndex , setCurrentPageIndex] = useState<number>(0)
   const [currentPage, setCurrentPage] = useState<string>("");
   const [viewTaskDetails, setViewTaskDetails] = useState<Task>(sampleTask);
   const [deleteBoard, setDeleteBoard] = useState<boolean>(false); // to handle same component for differnent data the components are edit and create board
@@ -109,6 +137,9 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
   // const [dropdown, setDropdown] = useState<string>(viewTaskDetails?.status);
 
   const [addTaskDetails, setAddTaskDetails] = useState<Task>(sampleTask);
+  const [newBoard,setNewBoard] = useState<boolean>(false)
+  const [addBoard, setAddBoard] = useState<Board>(sampleBoard)
+  const [editBoard, setEditBoard] = useState<Kanban>({ boards: [] })
 
   const toggleTheme = (): void => {
     setToggle(!toggle);
@@ -118,6 +149,8 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
     if (data && data.boards) {
       setKanban(data);
       setCurrentPage(data?.boards[2]?.name);
+      setCurrentPageIndex(2)
+      setEditBoard(data)
     }
     // console.log("data", data);
   }, []);
@@ -189,32 +222,47 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
 
 
 
-  const addNewTaskDetails = (addNewTaskDetails: Task) => {
-
-    const updatedKanban = { ...kanban };
-
-    updatedKanban.boards.map((board,boardIndex) => {
-     if(board.name === currentPage){
-      updatedKanban.boards[boardIndex].columns.map((col,colIndex) => {
-        if(col.name === addNewTaskDetails.status){
-          updatedKanban.boards[boardIndex].columns[colIndex].tasks.push(addNewTaskDetails)
-          // updateKanbanState(addNewTaskDetails,  updatedKanban.boards[boardIndex].columns[colIndex].tasks.length)
+  const addNewTaskDetails = (newTaskDetails: Task) => {
+    const updatedKanban = {
+      ...kanban,
+      boards: kanban.boards.map(board => {
+        if (board.name === currentPage) {
+          return {
+            ...board,
+            columns: board.columns.map(column => {
+              if (column.name === newTaskDetails.status) {
+                return {
+                  ...column,
+                  tasks: [...column.tasks, newTaskDetails],
+                };
+              }
+              return column;
+            }),
+          };
         }
-      })
-     }
-    })
+        return board;
+      }),
+    };
+  
+    // Log the updated kanban for debugging
+    console.log("inside Kanban:", updatedKanban);
+  
+    // Update the kanban state using a function like UpdateBoard (Replace UpdateBoard with your actual update function)
+    UpdateBoard(updatedKanban);
 
-    console.log("tetstst", updatedKanban);
-    // handleAddTaskDropdown(addNewTaskDetails, addNewTaskDetails.status)
-    UpdateBoard(updatedKanban)
-    // updateKanban(addNewTaskDetails)
-    // updateKanbanState(addNewTaskDetails)
+    // updateKanbanState(newTaskDetails)
     setAddTaskDetails(sampleTask)
-  }
+  };
  
   const UpdateBoard = (board: Kanban) => { 
     setKanban(board)
+    console.log("Updated Kanban:", board);
   }
+
+  useEffect(() => {
+    console.log("Outside Kanban:", kanban);
+  }, [kanban]);
+
 
   const handleDeleteViewTask = (deleteTaskDetails:Task, deleteTaskIndex: number) => {
     let updatedKanban = { ...kanban };
@@ -367,18 +415,101 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
     setDeleteBoard(!board);
   };
 
+  const handleCreateBoard = (newBoard: boolean) => {
+    setNewBoard(!newBoard)
+  }
+
   const handleNewTask = (addNewTask: boolean) => {
     setNewTask(!addNewTask);
   };
 
-  // const handleTaskTitleChange = () => {
 
-  // }
+  const handleNewColumn = () => {
+    const sampleColumn =   {
+      "name": "",
+      "tasks": []
+    }
+    setAddBoard({...addBoard, columns: [...addBoard.columns , sampleColumn]})
+  }
+
+  const handleAddNewColumn = () => {
+    const sampleColumn =   {
+      "name": "",
+      "tasks": []
+    }
+
+    const updatedKanban = { ...editBoard };
+    updatedKanban.boards[currentPageIndex].columns = [...updatedKanban.boards[currentPageIndex].columns , sampleColumn]
+    setEditBoard(updatedKanban);
+    UpdateBoard(updatedKanban)
+   
+  }
+
+  const handleBoardNameChange = (e:React.ChangeEvent<HTMLInputElement> ) => {
+    const updatedKanban = { ...editBoard };
+    updatedKanban.boards[currentPageIndex].name = e.target.value;
+    handleDialog("",e.target.value)
+    setEditBoard(updatedKanban);
+    UpdateBoard(updatedKanban)
+}
+
+const handleBoardColumnNameChange = (e:React.ChangeEvent<HTMLInputElement>, colIndex: number) => {
+  const colName = e.target.value
+  const updatedKanban = { ...editBoard };
+  updatedKanban.boards[currentPageIndex].columns[colIndex].name = e.target.value;
+  updatedKanban.boards[currentPageIndex].columns[colIndex].tasks.map(task => {
+     task.status = colName
+  })
+  setEditBoard(updatedKanban);
+}
+
+  
+  const handleRemoveNewColumn = (colIndex: number) => {
+
+    const updatedCol = addBoard.columns.filter((_,index) => index !==colIndex )
+    setAddBoard({
+      ...addBoard,
+      columns: [...updatedCol]
+    })
+  }
+
+  const handleRemoveColumn = (colIndex: number) => {
+    const updatedKanban = { ...editBoard };
+    const updatedCol = updatedKanban.boards[currentPageIndex].columns.filter((_,index) => index !==colIndex )
+    updatedKanban.boards[currentPageIndex].columns = updatedCol;
+    setEditBoard(updatedKanban);
+    UpdateBoard(updatedKanban)
+  }
+
+  const handleAddNewBoard = (addNewBoard : Board) => {
+    UpdateBoard({boards : [...kanban.boards, addNewBoard]})
+  }
+
+
   const handleSubtaskRemove = (index: number): void => {
     const updateSubtask = viewTaskDetails.subtasks.filter((_task,i)=> i !== index)
     setViewTaskDetails({...viewTaskDetails,subtasks: updateSubtask})
     updateKanbanState({...viewTaskDetails,subtasks: updateSubtask}, viewTaskIndex);
   }
+
+  const handleDeleteCurrentBoard = () => {
+    const updatedKanban = { ...kanban };
+    updatedKanban.boards = updatedKanban.boards.filter(board => board.name !== currentPage);
+  
+    // let newIndex = currentPageIndex;
+    // if (newIndex >= updatedKanban.boards.length) {
+    //   newIndex = updatedKanban.boards.length - 1;
+    // }
+  
+    // if (newIndex >= 0) {
+    //   handleDialog("", updatedKanban.boards[newIndex].name);
+    //   setCurrentPageIndex(newIndex);
+    // }
+  
+    UpdateBoard(updatedKanban);
+  };
+  
+  
 
   const handleNewSubtaskRemove = (index:number): void => {
     const updateSubtask = addTaskDetails.subtasks.filter((_task,i)=> i !== index);
@@ -433,7 +564,23 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
         handleNewSubtaskRemove,
         handleAddNewSubTask,
         setAddTaskDetails,
-        setViewTaskDetails
+        setViewTaskDetails,
+        handleCreateBoard,
+        newBoard,
+        setAddBoard,
+        addBoard,
+        handleNewColumn,
+        handleRemoveNewColumn,
+        handleAddNewBoard,
+        setEditBoard,
+        setCurrentPageIndex,
+        currentPageIndex,
+        editBoard,
+        handleRemoveColumn,
+        handleAddNewColumn,
+        handleBoardNameChange,
+        handleBoardColumnNameChange,
+        handleDeleteCurrentBoard
       }}
     >
       {children}

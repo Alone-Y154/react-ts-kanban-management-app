@@ -32,10 +32,15 @@ const AddEditTask = () => {
     handleDialog(component, currentPage);
   };
 
+
   const handleSave = () => {
+    handleViewTask(viewTaskDetails,viewTaskIndex);
+    handleClickOutside()
+  }
+
+  const handleCreate = () => {
     addNewTaskDetails(addTaskDetails)
-    handleViewTask(viewTaskDetails,viewTaskIndex)
-    handleSaveChanges(newTask ? 'EditTask': "AddNewTask");
+    handleClickOutside()
   }
 
   
@@ -145,7 +150,7 @@ const AddEditTask = () => {
           })}
 
         <div
-          onClick={handleSave}
+          onClick= { newTask ? handleSave : handleCreate} 
           className="w-[295px] mt-2 mb-2 h-10 rounded-[20px] bg-primary-700  text-grey-400 flex items-center justify-center text-[13px] font-bold"
         >
           {newTask ? "Save Changes" : "Create Task"}
