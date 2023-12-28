@@ -10,7 +10,7 @@ import { useEffect } from "react";
 
 function Navbar() {
 
-  const {dialogs, handleDialog,kanban, currentPage , handleCreateBoard, handleNewTask, handleDeleteBoard} = useKanban(); // Accessing handleDialog function from context
+  const {dialogs, sidebar, handleDialog,kanban, currentPage , handleCreateBoard, handleNewTask, handleDeleteBoard} = useKanban(); // Accessing handleDialog function from context
 
   const handleNavbarDropdown = (component : string) => {
     handleDialog(component, currentPage); // Call handleDialog to open NavbarDropdown
@@ -43,7 +43,7 @@ useEffect(()=>{
       <div className="flex h-16 md:h-20 items-center px-4 justify-between bg-grey-400">
         <div onClick={()=>handleNavbarDropdown("NavbarDropdown")}  className="flex md:gap-6 cursor-pointer items-center">
           <img className="mr-4 md:hidden" src={Logo} alt="" />
-          <img src={LogoDark} className="hidden md:block mr-[66px]" alt="logo"/>
+          <img src={LogoDark} className={`hidden md:block ${sidebar ? "mr-[66px]" : "" }`} alt="logo"/>
           <p className="w-[1px] bg-grey-600 h-20 hidden md:block"></p>
           <p className="mx-2 md:ml-0 text-secondary-700 text-lg md:text-xl font-bold">
             {currentPage &&
@@ -61,12 +61,13 @@ useEffect(()=>{
           <img src={downArrow} className={`${dialogs.NavbarDropdown ? "rotate-180 md:hidden" : "md:hidden"}`} alt="" />
         </div>
         <div className="flex gap-4 items-center">
-          <div onClick={handleTask} className="w-12 h-8 opacity-25 rounded-3xl flex items-center justify-center bg-primary-700">
-            <img src={addTask} alt="" />
+          <div onClick={handleTask} className="w-12 md:w-[164px] md:h-12 h-8 rounded-3xl flex items-center justify-center bg-primary-700 cursor-pointer"> {/* opacity-25 */}
+            <img className="md:hidden" src={addTask} alt="" />
+            <p className="hidden md:block text-grey-400 text-[15px] font-bold">+ Add New Task</p>
           </div>
           <img onClick={handleBoard} src={hamburger} alt="" />
         </div>
-        <div className="absolute right-5 top-16 ">
+        <div className="absolute md:top-20 right-5 top-16 ">
        {dialogs.EditandDeleteBoard && <EditandDelete />}
        </div>
       </div>

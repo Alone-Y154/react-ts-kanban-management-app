@@ -83,6 +83,8 @@ export type KanbanContext = {
   handleBoardNameChange: (e:React.ChangeEvent<HTMLInputElement>) => void
   handleBoardColumnNameChange: (e:React.ChangeEvent<HTMLInputElement>, colIndex: number) => void;
   handleDeleteCurrentBoard: () => void;
+  handleSidebar: () => void;
+  sidebar: boolean;
 };
 
 export type kanbanProviderProps = {
@@ -140,6 +142,7 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
   const [newBoard,setNewBoard] = useState<boolean>(false)
   const [addBoard, setAddBoard] = useState<Board>(sampleBoard)
   const [editBoard, setEditBoard] = useState<Kanban>({ boards: [] })
+  const [sidebar, setSidebar] = useState<boolean>(false)
 
   const toggleTheme = (): void => {
     setToggle(!toggle);
@@ -461,6 +464,7 @@ const handleBoardColumnNameChange = (e:React.ChangeEvent<HTMLInputElement>, colI
      task.status = colName
   })
   setEditBoard(updatedKanban);
+  UpdateBoard(updatedKanban)
 }
 
   
@@ -535,6 +539,10 @@ const handleBoardColumnNameChange = (e:React.ChangeEvent<HTMLInputElement>, colI
     setAddTaskDetails(updatetask)
   }
 
+
+  const handleSidebar = () => {
+    setSidebar(!sidebar)
+  }
   return (
     <kanbanContext.Provider
       value={{
@@ -580,7 +588,9 @@ const handleBoardColumnNameChange = (e:React.ChangeEvent<HTMLInputElement>, colI
         handleAddNewColumn,
         handleBoardNameChange,
         handleBoardColumnNameChange,
-        handleDeleteCurrentBoard
+        handleDeleteCurrentBoard,
+        handleSidebar,
+        sidebar
       }}
     >
       {children}

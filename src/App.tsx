@@ -7,17 +7,26 @@ import SideNavBar from "./Components/SideNavBar";
 import ViewTask from "./Components/ViewTask";
 import { useKanban } from "./context/context";
 import ShowSidebar from "./assets/icon-show-sidebar.svg"
+// import AddColumn from "./Components/AddColumn";
 
 function App() {
-  const { dialogs } = useKanban();
+  const { dialogs, sidebar, handleSidebar } = useKanban(); {/* kanban, currentPage */}
   return (
     <div className="flex flex-col h-screen bg-grey-500">
       <Navbar />
-      <p className="bg-primary-700 absolute bottom-8 rounded-r-full w-14 h-12 flex justify-center items-center"><img src={ShowSidebar} /></p>
+     {!sidebar && <p onClick={handleSidebar} className="bg-primary-700 hidden  cursor-pointer absolute bottom-8 rounded-r-full w-14 h-12 md:flex justify-center items-center"><img src={ShowSidebar} /></p>}
       <div className="bg-grey-500 flex flex-col md:flex-row h-screen w-full  overflow-x-scroll no-scrollbar scroll-smooth">
-        <SideNavBar />
+      {sidebar && <SideNavBar />}  
         <div className="p-6  overflow-x-scroll no-scrollbar scroll-smooth">
+          {/* {kanban.boards.map(board => {
+              if(board.name === currentPage) {
+                return(
+                board.columns.length > 0 ? <Column /> : <AddColumn />
+                )
+              }
+          })  } */}
           <Column />
+          
         </div>
       </div>
 
