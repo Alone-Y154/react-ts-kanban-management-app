@@ -1,4 +1,5 @@
 import Logo from "../assets/logo-mobile.svg";
+import LogoDark from "../assets/logo-dark.svg";
 import downArrow from "../assets/icon-chevron-down.svg";
 import addTask from "../assets/icon-add-task-mobile.svg";
 import hamburger from "../assets/icon-vertical-ellipsis.svg";
@@ -39,10 +40,12 @@ useEffect(()=>{
 // useClickOutside(ref, handleClickOutside);
   return (
     <div className="flex flex-col">
-      <div className="flex h-16 items-center px-4 justify-between bg-grey-400">
-        <div onClick={()=>handleNavbarDropdown("NavbarDropdown")}  className="flex cursor-pointer items-center">
-          <img className="mr-4" src={Logo} alt="" />
-          <p className="mx-2 text-secondary-700 text-lg font-bold">
+      <div className="flex h-16 md:h-20 items-center px-4 justify-between bg-grey-400">
+        <div onClick={()=>handleNavbarDropdown("NavbarDropdown")}  className="flex md:gap-6 cursor-pointer items-center">
+          <img className="mr-4 md:hidden" src={Logo} alt="" />
+          <img src={LogoDark} className="hidden md:block mr-[66px]" alt="logo"/>
+          <p className="w-[1px] bg-grey-600 h-20 hidden md:block"></p>
+          <p className="mx-2 md:ml-0 text-secondary-700 text-lg md:text-xl font-bold">
             {currentPage &&
               
               kanban.boards.map(board => {
@@ -55,7 +58,7 @@ useEffect(()=>{
 
             {/* {currentPage} */}
           </p>
-          <img src={downArrow} className={`${dialogs.NavbarDropdown ? "rotate-180" : ""}`} alt="" />
+          <img src={downArrow} className={`${dialogs.NavbarDropdown ? "rotate-180 md:hidden" : "md:hidden"}`} alt="" />
         </div>
         <div className="flex gap-4 items-center">
           <div onClick={handleTask} className="w-12 h-8 opacity-25 rounded-3xl flex items-center justify-center bg-primary-700">
