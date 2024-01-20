@@ -15,7 +15,7 @@ function App() {
     <div className="flex flex-col h-screen bg-grey-500">
       <Navbar />
      {!sidebar && <p onClick={handleSidebar} className="bg-primary-700 hidden  cursor-pointer absolute bottom-8 rounded-r-full w-14 h-12 md:flex justify-center items-center"><img src={ShowSidebar} /></p>}
-      <div className="bg-grey-500 flex flex-col md:flex-row h-screen w-full  overflow-x-scroll no-scrollbar scroll-smooth">
+      <div className="bg-grey-500 dark:bg-secondary-600 flex flex-col md:flex-row h-screen w-full  overflow-x-scroll no-scrollbar scroll-smooth">
       {sidebar && <SideNavBar />}  
         <div className="p-6  overflow-x-scroll no-scrollbar scroll-smooth">
           {/* {kanban.boards.map(board => {

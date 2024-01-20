@@ -7,10 +7,11 @@ import NavbarDropdown from "./NavbarDropdown";
 import { useKanban } from "../context/context";
 import EditandDelete from "./EditandDeleteCard";
 import { useEffect } from "react";
+import LogoLight from "../assets/logo-light.svg";
 
 function Navbar() {
 
-  const {dialogs, sidebar, handleDialog,kanban, currentPage , handleCreateBoard, handleNewTask, handleDeleteBoard} = useKanban(); // Accessing handleDialog function from context
+  const {dialogs, sidebar, toggle, handleDialog,kanban, currentPage , handleCreateBoard, handleNewTask, handleDeleteBoard} = useKanban(); // Accessing handleDialog function from context
 
   const handleNavbarDropdown = (component : string) => {
     handleDialog(component, currentPage); // Call handleDialog to open NavbarDropdown
@@ -40,12 +41,12 @@ useEffect(()=>{
 // useClickOutside(ref, handleClickOutside);
   return (
     <div className="flex flex-col">
-      <div className="flex h-16 md:h-20 items-center px-4 justify-between bg-grey-400">
+      <div className="flex h-16 md:h-20 items-center px-4 justify-between bg-grey-400 dark:bg-secondary-500">
         <div onClick={()=>handleNavbarDropdown("NavbarDropdown")}  className="flex md:gap-6 cursor-pointer items-center">
           <img className="mr-4 md:hidden" src={Logo} alt="" />
-          <img src={LogoDark} className={`hidden md:block ${sidebar ? "mr-[66px]" : "" }`} alt="logo"/>
-          <p className="w-[1px] bg-grey-600 h-20 hidden md:block"></p>
-          <p className="mx-2 md:ml-0 text-secondary-700 text-lg md:text-xl font-bold">
+          <img src={toggle ? LogoLight :LogoDark } className={`hidden md:block ${sidebar ? "mr-[66px]" : "" }`} alt="logo"/>
+          <p className="w-[1px] bg-grey-600 h-20 hidden md:block dark:bg-secondary-400"></p>
+          <p className="mx-2 md:ml-0 dark:text-grey-400 text-secondary-700 text-lg md:text-xl font-bold">
             {currentPage &&
               
               kanban.boards.map(board => {

@@ -142,11 +142,27 @@ export const Kanbanprovider = ({ children }: kanbanProviderProps) => {
   const [newBoard,setNewBoard] = useState<boolean>(false)
   const [addBoard, setAddBoard] = useState<Board>(sampleBoard)
   const [editBoard, setEditBoard] = useState<Kanban>({ boards: [] })
-  const [sidebar, setSidebar] = useState<boolean>(false)
+  const [sidebar, setSidebar] = useState<boolean>(true)
 
   const toggleTheme = (): void => {
     setToggle(!toggle);
+    handleTheme()
   };
+
+  const handleTheme = () => {
+    toggle ? setLightMode() : setDarkMode()
+}
+
+
+  const setDarkMode = ():void => {
+    document.body.classList.remove("light");
+    document.body.classList.add("dark");
+}
+
+const setLightMode = ():void => {
+    document.body.classList.add("light");
+    document.body.classList.remove("dark");
+  }
 
   useEffect(() => {
     if (data && data.boards) {

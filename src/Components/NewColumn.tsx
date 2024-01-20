@@ -9,7 +9,7 @@ const NewColumn = () => {
     handleDialog("EditBoard", currentPage)
   }
   return (
-      <div onClick={handleBoard} className="text-grey-700 cursor-pointer rounded-md text-lg font-bold flex justify-center w-[280px] bg-grey-600 h-[75vh] items-center ">
+      <div onClick={handleBoard} className="text-grey-700 cursor-pointer rounded-md text-lg font-bold flex justify-center w-[280px] bg-grey-600 dark:bg-secondary-500 dark:bg-opacity-30 h-[75vh] items-center ">
         + New Column
       </div>
   );

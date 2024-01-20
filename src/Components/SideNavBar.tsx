@@ -31,7 +31,7 @@ const SideNavBar = () => {
   };
 
   return (
-    <div className="hidden md:flex justify-between flex-col w-[260px] h-full bg-grey-400">
+    <div className="hidden md:flex justify-between flex-col w-[260px] h-full bg-grey-400 dark:bg-secondary-500">
       <div className="md:flex flex-col">
         <p className="text-grey-700 text-xs font-bold tracking-[2.4px] px-6 py-4">
           ALL BOARDS ({kanban.boards.length})
@@ -41,7 +41,7 @@ const SideNavBar = () => {
             <div key={index} className=" flex flex-col pr-6">
               <div
                 onClick={() => handleNavbarDropdown(board.name, index)}
-                className={`p-4 hover:rounded-r-full flex cursor-pointer items-center gap-3 ${currentPage === board.name ? "text-grey-400 fill-grey-400 bg-primary-700 rounded-r-full": "text-grey-700 fill-grey-700 hover:text-primary-700 hover:fill-primary-700 hover:bg-primary-700 hover:bg-opacity-10 "}`}
+                className={`p-4 hover:rounded-r-full flex cursor-pointer items-center gap-3 ${currentPage === board.name ? "text-grey-400 fill-grey-400 bg-primary-700 rounded-r-full": "text-grey-700 fill-grey-700 hover:text-primary-700 hover:fill-primary-700 hover:bg-primary-700 hover:bg-opacity-10 dark:hover:bg-grey-400"}`}
               >
                 <Board />
                 <p className=" text-[15px] font-bold">{board.name}</p>
@@ -59,7 +59,7 @@ const SideNavBar = () => {
       </div>
 
       <div className="flex flex-col mx-3 mb-12 gap-[30px]">
-        <div className="w-[235px] rounded-md h-12 bg-grey-500 flex items-center justify-center gap-4">
+        <div className="w-[235px] rounded-md h-12 bg-grey-500 dark:bg-secondary-600 flex items-center justify-center gap-4">
           <img src={light} alt="light" />
           <input
             onChange={toggleTheme}
@@ -70,7 +70,7 @@ const SideNavBar = () => {
           <label
             className={` before:absolute before:content-[''] before:bg-grey-500 before:w-[18px] before:h-[18px] before:rounded-full before:my-[3px] before:mx-[3px] ${
               toggle ? "before:right-0" : "before:left-0"
-            } before:translate-[0.2s] w-12 h-6  rounded-[14.5px] bg-primary-700 cursor-pointer relative transition-[0.2s]`}
+            } before:translate-[0.2s] w-12 h-6  rounded-[14.5px] bg-primary-700 hover:bg-primary-600 cursor-pointer relative transition-[0.2s]`}
             htmlFor="theme"
           ></label>
           <img src={dark} alt="dark" />

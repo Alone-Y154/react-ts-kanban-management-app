@@ -20,7 +20,7 @@ const Column = () => {
                           {col.name} ({col.tasks.length})
                         </p>
                       </div>
-                      <div className="rounded-md flex flex-col gap-5 w-[280px] bg-grey-500 min-h-[75vh]">
+                      <div className="rounded-md flex flex-col gap-5 w-[280px] bg-grey-500 dark:bg-secondary-600 min-h-[75vh]">
                        {
                         col.tasks.map((task,i) => {
                             if(col.name === task.status){

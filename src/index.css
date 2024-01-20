@@ -34,7 +34,7 @@ input[type=checkbox] {
 }
 
 input[type=checkbox]:checked+label {
-  color: var(--Black, #000112);
+  /* color: var(--Black, #000112); */
   font-family: Plus Jakarta Sans;
   font-size: 12px;
   font-style: normal;
