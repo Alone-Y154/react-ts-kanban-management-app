@@ -167,8 +167,8 @@ const setLightMode = ():void => {
   useEffect(() => {
     if (data && data.boards) {
       setKanban(data);
-      setCurrentPage(data?.boards[2]?.name);
-      setCurrentPageIndex(2)
+      setCurrentPage(data?.boards[0]?.name);
+      setCurrentPageIndex(0)
       setEditBoard(data)
     }
     // console.log("data", data);
